@@ -17,6 +17,10 @@
 
     function scrollOutputToBottom(output) {
         output.scrollTop = output.scrollHeight;
+        var container = output.parentElement;
+        if (container) {
+            container.scrollTop = container.scrollHeight;
+        }
     }
 
     function appendCommandEcho(commandText) {

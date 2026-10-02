@@ -798,6 +798,30 @@ body[data-color-theme="paper"] .hero-journey-card {
     max-height: 300px;
     overflow: auto;
     padding: 12px;
+    scrollbar-width: thin;
+    scrollbar-color: #1c4a2c transparent;
+}
+
+.terminal-dock-body::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.terminal-dock-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.terminal-dock-body::-webkit-scrollbar-thumb {
+    background: #1c4a2c;
+    border-radius: 3px;
+}
+
+.terminal-dock-body::-webkit-scrollbar-thumb:hover {
+    background: #00e665;
+}
+
+.terminal-dock-body::-webkit-scrollbar-corner {
+    background: transparent;
 }
 
 #terminalOutput {
