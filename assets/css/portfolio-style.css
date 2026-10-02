@@ -811,6 +811,31 @@ body[data-color-theme="paper"] .hero-journey-card {
     min-height: 44px;
 }
 
+.terminal-submit-button {
+    min-width: 36px;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid #12351f;
+    border-radius: 6px;
+    color: inherit;
+    font: inherit;
+    font-size: 15px;
+    line-height: 1;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+}
+
+.terminal-submit-button:hover,
+.terminal-submit-button:focus-visible {
+    opacity: 1;
+    border-color: var(--primary-accent);
+    background: var(--primary-accent-soft);
+}
+
 .site-footer {
     position: relative;
     z-index: 5;

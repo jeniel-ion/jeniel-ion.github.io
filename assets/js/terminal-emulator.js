@@ -182,12 +182,23 @@
         terminal.historyPosition = terminal.commandHistory.length;
     }
 
+    function submitInput() {
+        pushHistory(input.value);
+        runCommand(input.value);
+        input.value = "";
+    }
+
     function wireInputHistory() {
+        var submitButton = document.getElementById("terminalSubmitButton");
+        if (submitButton) {
+            submitButton.addEventListener("click", function () {
+                submitInput();
+                input.focus();
+            });
+        }
         input.addEventListener("keydown", function (keyEvent) {
             if (keyEvent.key === "Enter") {
-                pushHistory(input.value);
-                runCommand(input.value);
-                input.value = "";
+                submitInput();
                 return;
             }
             if (keyEvent.key === "ArrowUp") {
@@ -245,8 +256,8 @@
     function printWelcomeMessage() {
         terminal.appendCommandEcho("help");
         terminal.typeSystemReplies([
-            {text: "Journey terminal online.", kind: "heading"},
-            {text: "Try: origin, journey, now, hireme.", kind: "body"}
+            {text: "A glimpse into my journey so far. Try typing one of the available commands to dig deeper!", kind: "heading"},
+            {text: "Available commands: origin, journey, now, hireme.", kind: "body"}
         ]);
     }
 

@@ -19,30 +19,30 @@ window.FeaturedWriteup = {
 window.HackerJourneyStages = [
     {
         stageName: "The kid who broke things",
-        stageDetail: "I started by messing around with games, trying to root phones, and occasionally breaking them in the process. At some point, I figured out how to get onto Wi-Fi networks too — honestly, I just wanted free internet."
+        stageDetail: "I started by messing with games, trying to root phones, and occasionally breaking them. Then I figured out how to get onto Wi-Fi networks — I just wanted free internet."
     },
     {
         stageName: "Finding my way into security",
-        stageDetail: "That curiosity slowly turned toward web security. I started learning pentesting, playing with vulnerable applications, and figuring out how websites could be broken and, more importantly, why."
+        stageDetail: "That curiosity eventually led me to web security. I started learning pentesting, breaking vulnerable apps, and figuring out why they broke."
     },
     {
         stageName: "College changed my perspective",
-        stageDetail: "College introduced me to software development. I started building things instead of only breaking them. Hackathons, projects, and internships taught me how software is actually put together — and that made me look at security very differently."
+        stageDetail: "College got me into software development. I started building instead of just breaking. Hackathons and projects taught me how software actually comes together."
     },
     {
         stageName: "Breaking and building",
-        stageDetail: "Through internships and projects, I got hands-on with backend systems, APIs, databases, and cloud infrastructure. I kept coming back to security, while getting better at understanding the systems behind the vulnerabilities."
+        stageDetail: "Internships gave me hands-on experience with APIs, backends, databases, and cloud. The more I built, the better I understood what I was trying to break."
     },
     {
         stageName: "First job, real systems",
-        stageDetail: "My first full-time role brought everything together. I got to work with production systems, cloud infrastructure, CI/CD, identity, application security, and security automation — and learned what changes when the systems are actually being used."
+        stageDetail: "My first job put me around real production systems, cloud, CI/CD, identity, and AppSec. It showed me what security looks like when things actually matter."
     },
     {
-        stageName: "Getting deeper into pentesting",
-        stageDetail: "Alongside work, I kept pushing deeper into offensive security — testing real applications, learning different frameworks and techniques, and finding vulnerabilities through hands-on experimentation."
+        stageName: "Going deeper",
+        stageDetail: "I kept getting deeper into pentesting — trying different techniques, testing real applications, and learning by breaking things."
     },
     {
         stageName: "What's next?",
-        stageDetail: "Still figuring that part out. There is a lot more I want to learn, break, build, and understand. For now, I'm exploring where security takes me next."
+        stageDetail: "Still figuring that out. There’s a lot more I want to learn, build, break, and understand."
     }
 ];
