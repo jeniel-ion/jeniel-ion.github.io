@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Account Takeover via Broken Access Control (Gynzy) — Jeniel Shah</title>
+<meta name="description" content="How swapping a userId on a classroom email-change request — plus password reset — turned into account takeover for an entire class. Sanitized writeup.">
+<link rel="canonical" href="https://jeniel-ion.github.io/writeups/gynzy-account-takeover.html">
+<meta name="robots" content="index,follow, max-image-preview:large, max-snippet:-1">
+<meta name="author" content="Jeniel Shah">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Account Takeover via Broken Access Control — Gynzy">
+<meta property="og:description" content="How swapping a userId on a classroom email-change request — plus password reset — turned into account takeover for an entire class. Sanitized writeup.">
+<meta property="og:url" content="https://jeniel-ion.github.io/writeups/gynzy-account-takeover.html">
+<meta property="og:image" content="https://jeniel-ion.github.io/assets/img/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Account Takeover via Broken Access Control — Gynzy">
+<meta name="twitter:description" content="Swapped a userId, changed an email, reset a password — and could have taken over a whole classroom.">
+<meta name="twitter:image" content="https://jeniel-ion.github.io/assets/img/og-image.png">
+<link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg">
+<link rel="stylesheet" href="../assets/css/portfolio-style.css">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Article","headline":"Account Takeover via Broken Access Control — Gynzy","description":"How swapping a userId on a classroom email-change request — plus password reset — turned into account takeover for an entire class. Sanitized writeup.","url":"https://jeniel-ion.github.io/writeups/gynzy-account-takeover.html","inLanguage":"en","dateModified":"2026-02-10","author":{"@type":"Person","name":"Jeniel Shah","url":"https://jeniel-ion.github.io/","sameAs":["https://github.com/jeniel-ion","https://linkedin.com/in/jeniel-shah-77a455205","https://x.com/JenielShah"]},"publisher":{"@type":"Person","name":"Jeniel Shah"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://jeniel-ion.github.io/writeups/gynzy-account-takeover.html"},"image":"https://jeniel-ion.github.io/assets/img/og-image.png"}</script>
+</head>
+<body data-color-theme="green">
+<main class="page-container article-page">
+<p><a href="../index.html#writeups">← Back to Jeniel Shah</a></p>
+<p class="muted-text">Broken Access Control • 5 min read • Sanitized, endpoints redacted</p>
+<h1>Account Takeover via Broken Access Control — Gynzy</h1>
+<p>Found a broken access control bug in <a href="https://www.gynzy.com/en/" rel="noopener">Gynzy</a>, a platform teachers and students use for running classrooms. </p>
+
+<h2>Short version</h2>
+<ul>
+<li>The admin UI won't let you touch accounts you shouldn't — but the API behind it wasn't asking the same questions. I swapped the <code>userId</code> in an email-change request to a different student, and it just worked.</li>
+<li>The server did check that the student was in my classroom. It never checked whether I was allowed to change their <strong>email</strong>.</li>
+<li>Email is where password resets go. So: change the email, hit "forgot password", the reset link lands in my inbox, new password, done.</li>
+<li>And it worked on every type of student in the class — not just one.</li>
+</ul>
+
+<h2>How I found it</h2>
+<p>Gynzy lets teachers manage a classroom full of student accounts. Like most apps, the restrictions live in the UI — buttons you can't click, options you can't see. That's fine for honest users, but I wanted to know whether the API enforced the same rules for someone who doesn't bother with the UI at all.</p>
+<p>The user-management requests had the target's user ID sitting right inside them, so that's where I started poking.</p>
+
+<h2>The bug</h2>
+<p>I logged in as the classroom admin and replayed the email-change request, pointed at a different student:</p>
+<pre><code>POST /&lt;email-update-endpoint&gt;
+...
+userId=&lt;target-user-id&gt;
+email=&lt;attacker-controlled-email&gt;</code></pre>
+<p>I changed <code>userId</code> from my own account to another student account I control, and the server accepted it — the email got updated as if nothing happened.</p>
+<p>Here's the thing: the server <em>did</em> verify the student belonged to my classroom. So it was paying attention — it just asked the wrong question. It confirmed <em>who this student was to me</em>, but never asked <em>whether I should be allowed to change their email at all</em>. Those are two completely different permissions:</p>
+<pre><code>"is this student in my classroom?"        → yes, go ahead   ✓ asked
+"is this admin allowed to change emails?" → never asked      ✗</code></pre>
+<p>Managing a classroom and resetting a student's login email are not the same thing — the code treated them like they were.</p>
+
+<h2>Chaining it</h2>
+<p>Changing an email doesn't hand me their password — it's just one field in a database. So I asked the obvious question: what else trusts that field?</p>
+<p>Password recovery does. The forgot-password flow sends a reset link to whatever address is sitting on the account. And I had just made that address mine:</p>
+<pre><code>Admin session
+     ↓
+Modify target user's email
+     ↓
+Email becomes attacker-controlled
+     ↓
+Forgot Password
+     ↓
+Password reset delivered to attacker
+     ↓
+New password
+     ↓
+Target account compromised</code></pre>
+
+
+</main>
+</body>
+</html>

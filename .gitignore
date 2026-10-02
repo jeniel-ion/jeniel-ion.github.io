@@ -1,0 +1,14 @@
+﻿# OS junk
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# IDE
+.idea/
+
+# Dependencies / build output
+node_modules/
+*.log
+
+# Local env
+.env
