@@ -638,6 +638,15 @@ body[data-color-theme="paper"] .hero-journey-card {
     font-size: 14px;
 }
 
+.theme-swatch {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--primary-accent);
+    margin-right: 7px;
+    flex: none;
+}
+
 .filter-button-row {
     display: flex;
     gap: 8px;

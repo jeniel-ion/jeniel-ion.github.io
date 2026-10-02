@@ -181,7 +181,12 @@
         function applyTheme() {
             document.body.setAttribute("data-color-theme", THEME_NAMES[activeIndex]);
             if (themeButton) {
-                themeButton.textContent = THEME_LABELS[activeIndex];
+                var label = themeButton.querySelector(".theme-label");
+                if (label) {
+                    label.textContent = "Theme: " + THEME_LABELS[activeIndex];
+                }
+                themeButton.title = "Switch color theme (currently " + THEME_LABELS[activeIndex] + ")";
+                themeButton.setAttribute("aria-label", "Switch color theme. Current: " + THEME_LABELS[activeIndex] + ". Activate to change.");
             }
         }
 
