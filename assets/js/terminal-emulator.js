@@ -41,6 +41,7 @@
     var REPLY_CLASS_BY_KIND = {
         heading: "terminal-heading-line",
         stage: "terminal-stage-line",
+        stageDetail: "terminal-stage-detail",
         error: "terminal-error-line",
         body: ""
     };
@@ -104,12 +105,18 @@
 
     function replyWithJourneyStages() {
         var stages = window.HackerJourneyStages || [];
-        terminal.typeSystemReplies(stages.map(function (stage, stageIndex) {
-            return {
-                text: "0" + (stageIndex + 1) + "  " + stage.stageName + " — " + stage.stageDetail,
+        var replyLines = [];
+        stages.forEach(function (stage, stageIndex) {
+            replyLines.push({
+                text: "0" + (stageIndex + 1) + "  " + stage.stageName,
                 kind: "stage"
-            };
-        }));
+            });
+            replyLines.push({
+                text: "    " + stage.stageDetail,
+                kind: "stageDetail"
+            });
+        });
+        terminal.typeSystemReplies(replyLines);
     }
 
     function scrollToContactSection() {

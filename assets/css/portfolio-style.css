@@ -728,6 +728,18 @@ body[data-color-theme="paper"] .hero-journey-card {
 .terminal-stage-line {
     color: #d6f2df;
     border-left-color: #00e665;
+    font-weight: 700;
+    margin-top: 12px;
+}
+
+.terminal-stage-line ~ .terminal-stage-line {
+    border-top: 1px dashed #1c4a2c;
+    padding-top: 8px;
+}
+
+.terminal-stage-detail {
+    color: #86a893;
+    margin-bottom: 10px;
 }
 
 .terminal-error-line {
