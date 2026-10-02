@@ -60,18 +60,103 @@
     }
 
     /* ------------------------------------------------------------------
+     * Typing effect — hero boot sequence.
+     * ------------------------------------------------------------------ */
+    var prefersReducedMotion = Boolean(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+
+    function makeTypeCursor() {
+        var cursor = document.createElement("span");
+        cursor.className = "type-cursor";
+        cursor.setAttribute("aria-hidden", "true");
+        return cursor;
+    }
+
+    function typeText(element, fullText, speedMs, onDone) {
+        var cursor = makeTypeCursor();
+        var charIndex = 0;
+        function step() {
+            element.textContent = fullText.slice(0, charIndex);
+            element.appendChild(cursor);
+            if (charIndex >= fullText.length) {
+                if (onDone) { onDone(cursor); }
+                return;
+            }
+            charIndex += 1;
+            window.setTimeout(step, speedMs);
+        }
+        step();
+    }
+
+    function typeTextLines(element, lines, speedMs, lineDelayMs, onDone) {
+        var cursor = makeTypeCursor();
+        var typedLines = [];
+        var lineIndex = 0;
+        var charIndex = 0;
+        function step() {
+            var currentLine = lines[lineIndex];
+            if (charIndex < currentLine.length) {
+                charIndex += 1;
+                typedLines[lineIndex] = currentLine.slice(0, charIndex);
+            } else {
+                typedLines[lineIndex] = currentLine;
+                lineIndex += 1;
+                charIndex = 0;
+            }
+            element.textContent = typedLines.join("\n");
+            element.appendChild(cursor);
+            if (lineIndex >= lines.length) {
+                if (onDone) { onDone(cursor); }
+                return;
+            }
+            window.setTimeout(step, charIndex === 0 ? lineDelayMs : speedMs);
+        }
+        step();
+    }
+
+    /* ------------------------------------------------------------------
      * Section renderers.
      * ------------------------------------------------------------------ */
     function renderHero() {
         setText("heroSummary", siteContent.profile.headlineSummary);
         var heroTerminal = byId("heroTerminalBody");
+        var promptCommand = byId("heroPromptCommand");
+        var heroName = byId("heroName");
+        var terminalLines = [
+            "$ cat ~/journey.txt",
+            "Juggling my way through the world of security, one exploit at a time.",
+            "",
+            "$ tap the terminal below to see how I got here →"
+        ];
+
+        if (prefersReducedMotion) {
+            if (heroTerminal) {
+                heroTerminal.textContent = terminalLines.join("\n");
+            }
+            return;
+        }
+
+        if (promptCommand) {
+            var promptText = promptCommand.textContent;
+            typeText(promptCommand, promptText, 30, function (promptCursor) {
+                if (promptCursor.parentNode) {
+                    promptCursor.parentNode.removeChild(promptCursor);
+                }
+            });
+        }
+
+        if (heroName) {
+            var nameText = heroName.textContent;
+            heroName.textContent = "";
+            window.setTimeout(function () {
+                typeText(heroName, nameText, 65);
+            }, 150);
+        }
+
         if (heroTerminal) {
-            heroTerminal.textContent = [
-                "$ cat ~/journey.txt",
-                "Juggling my way through the world of security, one exploit at a time.",
-                "",
-                "$ tap the terminal below to see how I got here →"
-            ].join("\n");
+            heroTerminal.textContent = "";
+            window.setTimeout(function () {
+                typeTextLines(heroTerminal, terminalLines, 14, 140);
+            }, 550);
         }
     }
 
@@ -116,10 +201,17 @@
     }
 
     function buildHallRow(record) {
+        var proofLink = record.proofLink
+            ? '<a class="hall-proof-link" href="' + escapeHtml(record.proofLink) +
+                '" target="_blank" rel="noopener noreferrer" title="' +
+                escapeHtml(record.proofNote || "View proof") +
+                '" aria-label="View proof for ' +
+                escapeHtml(record.targetOrganization) + '">Link<span aria-hidden="true">↗</span></a>'
+            : "";
         return '<div class="hall-row"><span class="severity-high">' + escapeHtml(record.severityLevel) +
             '</span><div><strong>' + escapeHtml(record.targetOrganization) +
             "</strong><small>" + escapeHtml(record.vulnerabilityClass) + " • " +
-            escapeHtml(record.disclosureYear) + "</small></div></div>";
+            escapeHtml(record.disclosureYear) + "</small></div>" + proofLink + "</div>";
     }
 
     function renderResearchHall(filterKey) {

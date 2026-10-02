@@ -607,6 +607,36 @@ body[data-color-theme="paper"] .hero-journey-card {
     color: var(--muted-text-color);
 }
 
+.hall-proof-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--primary-accent);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.hall-proof-link span {
+    font-size: 11px;
+    line-height: 1;
+}
+
+.hall-proof-link:hover,
+.hall-proof-link:focus-visible {
+    background: var(--primary-accent);
+    border-color: var(--primary-accent);
+    color: #04100a;
+}
+
 .button-primary, .button-primary-small, .button-ghost-small, .filter-button {
     font: inherit;
     border-radius: 8px;
@@ -645,6 +675,24 @@ body[data-color-theme="paper"] .hero-journey-card {
     background: var(--primary-accent);
     margin-right: 7px;
     flex: none;
+}
+
+.type-cursor {
+    display: inline-block;
+    width: 0.25em;
+    height: 0.85em;
+    margin-left: 3px;
+    background: currentColor;
+    vertical-align: -0.05em;
+    animation: type-cursor-blink 0.85s steps(1) infinite;
+}
+
+@keyframes type-cursor-blink {
+    50% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .type-cursor { animation: none; }
 }
 
 .filter-button-row {

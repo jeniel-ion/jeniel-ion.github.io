@@ -7,6 +7,7 @@
     "use strict";
 
     var TYPE_DELAY_MS = 140;
+    var prefersReducedMotion = Boolean(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
     var state = (window.JourneyTerminalState = window.JourneyTerminalState || {});
     state.commandHistory = [];
     state.historyPosition = 0;
@@ -23,9 +24,12 @@
         }
     }
 
-    function appendCommandEcho(commandText) {
+    function appendCommandEcho(commandText, onTyped) {
         var output = getOutput();
         if (!output) {
+            if (onTyped) {
+                onTyped();
+            }
             return;
         }
         var row = document.createElement("div");
@@ -35,11 +39,40 @@
         symbol.textContent = "$";
         var label = document.createElement("span");
         label.className = "terminal-echo-text";
-        label.textContent = commandText;
         row.appendChild(symbol);
         row.appendChild(label);
         output.appendChild(row);
-        scrollOutputToBottom(output);
+
+        if (prefersReducedMotion) {
+            label.textContent = commandText;
+            scrollOutputToBottom(output);
+            if (onTyped) {
+                onTyped();
+            }
+            return;
+        }
+
+        var cursor = document.createElement("span");
+        cursor.className = "type-cursor";
+        cursor.setAttribute("aria-hidden", "true");
+        var charIndex = 0;
+        function step() {
+            label.textContent = commandText.slice(0, charIndex);
+            label.appendChild(cursor);
+            scrollOutputToBottom(output);
+            if (charIndex >= commandText.length) {
+                if (cursor.parentNode) {
+                    cursor.parentNode.removeChild(cursor);
+                }
+                if (onTyped) {
+                    onTyped();
+                }
+                return;
+            }
+            charIndex += 1;
+            window.setTimeout(step, 30);
+        }
+        step();
     }
 
     var REPLY_CLASS_BY_KIND = {
@@ -176,13 +209,14 @@
         if (!commandName) {
             return;
         }
-        terminal.appendCommandEcho(rawCommand.trim());
-        var command = commands[commandName];
-        if (command) {
-            command.execute();
-        } else {
-            terminal.appendSystemReply('Unknown command "' + commandName + '". Type help.', "error");
-        }
+        terminal.appendCommandEcho(rawCommand.trim(), function () {
+            var command = commands[commandName];
+            if (command) {
+                command.execute();
+            } else {
+                terminal.appendSystemReply('Unknown command "' + commandName + '". Type help.', "error");
+            }
+        });
     }
 
     function pushHistory(value) {
@@ -265,11 +299,12 @@
     }
 
     function printWelcomeMessage() {
-        terminal.appendCommandEcho("help");
-        terminal.typeSystemReplies([
-            {text: "A glimpse into my journey so far. Try typing one of the available commands to dig deeper!", kind: "heading"},
-            {text: "Available commands: origin, journey, now, hireme.", kind: "body"}
-        ]);
+        terminal.appendCommandEcho("help", function () {
+            terminal.typeSystemReplies([
+                {text: "A glimpse into my journey so far. Try typing one of the available commands to dig deeper!", kind: "heading"},
+                {text: "Available commands: origin, journey, now, hireme.", kind: "body"}
+            ]);
+        });
     }
 
     /* ------------------------------------------------------------------

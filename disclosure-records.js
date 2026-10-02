@@ -9,20 +9,22 @@ window.DisclosureRecords = [
         vulnerabilityClass: "Information Leak",
         filterKey: "Information Leak",
         severityLevel: "High",
-        disclosureYear: "2024"
+        disclosureYear: "2022"
     },
     {
         targetOrganization: "United Nations",
         vulnerabilityClass: "Cross-Site Scripting",
         filterKey: "Cross-Site Scripting",
         severityLevel: "High",
-        disclosureYear: "2024"
+        disclosureYear: "2022",
+        proofLink: "https://unite.un.org/en/ict-security/hall-fame",
+        proofNote: "UN ICT Security Hall of Fame"
     },
     {
         targetOrganization: "Gynzy — education platform (1.6M students, 92K teachers)",
         vulnerabilityClass: "Account takeover",
         filterKey: "Broken Access Control",
         severityLevel: "High",
-        disclosureYear: "2024"
+        disclosureYear: "2023"
     }
 ];
