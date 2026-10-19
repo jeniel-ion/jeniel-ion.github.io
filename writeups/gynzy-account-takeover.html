@@ -5,20 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Account Takeover via Broken Access Control (Gynzy) — Jeniel Shah</title>
     <meta name="description"
-          content="How swapping a userId on a classroom email-change request — plus password reset — turned into account takeover for an entire class. Sanitized writeup.">
+          content="A broken access control vulnerability in Gynzy allowed unauthorized changes to student email addresses, which could then be used to take over student accounts through password recovery. Sanitized writeup.">
     <link rel="canonical" href="https://jeniel-ion.github.io/writeups/gynzy-account-takeover.html">
     <meta name="robots" content="index,follow, max-image-preview:large, max-snippet:-1">
     <meta name="author" content="Jeniel Shah">
     <meta property="og:type" content="article">
     <meta property="og:title" content="Account Takeover via Broken Access Control — Gynzy">
     <meta property="og:description"
-          content="How swapping a userId on a classroom email-change request — plus password reset — turned into account takeover for an entire class. Sanitized writeup.">
+          content="A broken access control vulnerability allowed unauthorized student email changes, creating a path to account takeover through password recovery.">
     <meta property="og:url" content="https://jeniel-ion.github.io/writeups/gynzy-account-takeover.html">
     <meta property="og:image" content="https://jeniel-ion.github.io/assets/img/og-image.png">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Account Takeover via Broken Access Control — Gynzy">
     <meta name="twitter:description"
-          content="Swapped a userId, changed an email, reset a password — and could have taken over a whole classroom.">
+          content="An authorization flaw in student email management could be chained with password recovery to compromise accounts.">
     <meta name="twitter:image" content="https://jeniel-ion.github.io/assets/img/og-image.png">
     <link rel="icon" type="image/svg+xml" href="../assets/img/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,7 +29,7 @@
         "@context": "https://schema.org",
         "@type": "Article",
         "headline": "Account Takeover via Broken Access Control — Gynzy",
-        "description": "How swapping a userId on a classroom email-change request — plus password reset — turned into account takeover for an entire class. Sanitized writeup.",
+        "description": "A broken access control vulnerability in Gynzy allowed unauthorized changes to student email addresses, creating a potential account takeover path through password recovery.",
         "url": "https://jeniel-ion.github.io/writeups/gynzy-account-takeover.html",
         "inLanguage": "en",
         "dateModified": "2026-02-10",
@@ -57,67 +57,95 @@
 <body data-color-theme="dark">
 <main class="page-container article-page">
     <p><a href="../index.html#writeups">← Back to Jeniel Shah</a></p>
+
     <h1>Account Takeover via Broken Access Control — Gynzy</h1>
-    <p>Found a broken access control bug in <a href="https://www.gynzy.com/en/" rel="noopener">Gynzy</a>, a platform
-        teachers and students use for running classrooms. </p>
+
+    <p>
+        I found a broken access control vulnerability in
+        <a href="https://www.gynzy.com/en/" rel="noopener">Gynzy</a>,
+        an educational platform used to manage classrooms and student
+        accounts. The flaw allowed a classroom administrator to change
+        another student's email address without the required
+        authorization, creating a path to account takeover.
+    </p>
 
     <h2>Short version</h2>
     <ul>
-        <li>The admin UI won't let you touch accounts you shouldn't — but the API behind it wasn't asking the same
-            questions. I swapped the <code>userId</code> in an email-change request to a different student, and it just
-            worked.
-        </li>
-        <li>The server did check that the student was in my classroom. It never checked whether I was allowed to change
-            their <strong>email</strong>.
-        </li>
-        <li>Email is where password resets go. So: change the email, hit "forgot password", the reset link lands in my
-            inbox, new password, done.
-        </li>
-        <li>And it worked on every type of student in the class — not just one.</li>
+        <li>The email-update API accepted a modified <code>userId</code>, allowing me to change another student's email address.</li>
+        <li>The backend verified classroom membership but failed to enforce permission to modify the student's email.</li>
+        <li>Since password recovery relied on the registered email address, the flaw could be chained into account takeover.</li>
+        <li>I reproduced the behavior across multiple student account types within the classroom.</li>
     </ul>
 
     <h2>How I found it</h2>
-    <p>Gynzy lets teachers manage a classroom full of student accounts. Like most apps, the restrictions live in the UI
-        — buttons you can't click, options you can't see. That's fine for honest users, but I wanted to know whether the
-        API enforced the same rules for someone who doesn't bother with the UI at all.</p>
-    <p>The user-management requests had the target's user ID sitting right inside them, so that's where I started
-        poking.</p>
+
+
+    <p>
+        While examining Gynzy's account-management requests, I noticed
+        that the email-update endpoint accepted a <code>userId</code>
+        parameter. I wanted to see whether the backend enforced the
+        same restrictions as the interface, so I tested the request
+        against another student account under my control.
+    </p>
 
     <h2>The bug</h2>
-    <p>I logged in as the classroom admin and replayed the email-change request, pointed at a different student:</p>
+
+    <p>
+        I modified the target <code>userId</code> in the email-update
+        request and supplied an email address I controlled:
+    </p>
+
     <pre><code>POST /&lt;email-update-endpoint&gt;
 ...
 userId=&lt;target-user-id&gt;
 email=&lt;attacker-controlled-email&gt;</code></pre>
-    <p>I changed <code>userId</code> from my own account to another student account I control, and the server accepted
-        it — the email got updated as if nothing happened.</p>
-    <p>Here's the thing: the server <em>did</em> verify the student belonged to my classroom. So it was paying attention
-        — it just asked the wrong question. It confirmed <em>who this student was to me</em>, but never asked <em>whether
-            I should be allowed to change their email at all</em>. Those are two completely different permissions:</p>
-    <pre><code>"is this student in my classroom?"        → yes, go ahead   ✓ asked
-"is this admin allowed to change emails?" → never asked      ✗</code></pre>
-    <p>Managing a classroom and resetting a student's login email are not the same thing — the code treated them like
-        they were.</p>
 
+    <p>
+        The server accepted the request and updated the target account's
+        email address. Although it verified that the student belonged
+        to my classroom, it did not properly check whether I was
+        authorized to modify that student's email.
+    </p>
+
+
+    <p>
+        The issue was a broken access control flaw: the backend
+        validated the relationship between the accounts but failed
+        to enforce authorization for the requested action.
+    </p>
+    
     <h2>Chaining it</h2>
-    <p>Changing an email doesn't hand me their password — it's just one field in a database. So I asked the obvious
-        question: what else trusts that field?</p>
-    <p>Password recovery does. The forgot-password flow sends a reset link to whatever address is sitting on the
-        account. And I had just made that address mine:</p>
-    <pre><code>Admin session
-     ↓
-Modify target user's email
-     ↓
-Email becomes attacker-controlled
-     ↓
-Forgot Password
-     ↓
-Password reset delivered to attacker
-     ↓
-New password
-     ↓
-Target account compromised</code></pre>
 
+    <p>
+        The email change became more serious when combined with
+        Gynzy's password recovery flow. Reset instructions were sent
+        to the email address associated with the account, meaning
+        an unauthorized email change could redirect the recovery
+        process to an address I controlled.
+    </p>
+
+    <pre><code>Authenticated classroom administrator
+                 ↓
+     Unauthorized email modification
+                 ↓
+   Target account's email is changed
+                 ↓
+       Password recovery is initiated
+                 ↓
+  Reset instructions reach the new address
+                 ↓
+       Password is reset by the attacker
+                 ↓
+         Potential account takeover</code></pre>
+
+    <p>
+        The impact was not limited to the initial email-change request.
+        The vulnerability could be chained with an existing account
+        recovery mechanism, turning an authorization failure into a
+        potential account compromise. I observed the behavior across
+        multiple student account types in the classroom, increasing
+        the potential scope of the issue.
+    </p>
 
 </main>
 </body>
