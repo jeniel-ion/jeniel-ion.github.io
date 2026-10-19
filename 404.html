@@ -1,10 +1,81 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>404 SEGFAULT — Jeniel Shah</title><meta name="robots" content="noindex"><style>body{background:#030a06;color:#00ff66;font-family:monospace;display:grid;place-items:center;height:100vh;margin:0}pre{border:1px solid #00ff66;padding:2rem;box-shadow:0 0 30px #00ff6633}a{color:#00ff66}</style></head><body><pre>
-  SEGMENTATION FAULT (core dumped)
-  ─────────────────────────────
-  $ cd /requested-page
-  bash: no such file or directory
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>404 — Jeniel Shah</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
+    <style>
+        body {
+            background: #0E0F11;
+            color: #9BA1A9;
+            font-family: Inter, -apple-system, "Segoe UI", Arial, sans-serif;
+            display: grid;
+            place-items: center;
+            height: 100vh;
+            margin: 0;
+        }
 
-  [1] try <a href="/">~/home</a>
-  [2] try <a href="/#about">~/about</a>
-  [3] try <a href="/#research">~/research</a>
-</pre></body></html>
+        .card {
+            border: 1px solid #23252A;
+            background: #131417;
+            border-radius: 8px;
+            padding: 40px 48px;
+            max-width: 420px;
+        }
+
+        h1 {
+            color: #EDEEF0;
+            font-size: 20px;
+            font-weight: 600;
+            margin: 0 0 8px;
+        }
+
+        p {
+            margin: 0 0 24px;
+            font-size: 14.5px;
+            line-height: 1.6;
+        }
+
+        .code {
+            font-family: "JetBrains Mono", Consolas, monospace;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            color: #D9A441;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 16px;
+        }
+
+        nav {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+        }
+
+        nav a {
+            color: #9BA1A9;
+            text-decoration: none;
+            transition: color 0.15s ease;
+        }
+
+        nav a:hover {
+            color: #EDEEF0;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <span class="code">Error 404</span>
+    <h1>Page not found</h1>
+    <p>The page you're after doesn't exist — or moved. The core didn't dump, thankfully.</p>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/#about">About</a>
+        <a href="/#research">Research</a>
+    </nav>
+</div>
+</body>
+</html>
+

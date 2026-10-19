@@ -28,7 +28,10 @@
     <meta name="twitter:image:alt" content="Jeniel Shah — Security Engineer">
     <link rel="icon" type="image/svg+xml" href="assets/img/favicon.svg">
     <link rel="manifest" href="manifest.webmanifest">
-    <meta name="theme-color" content="#040b07">
+    <meta name="theme-color" content="#0E0F11">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
     <link rel="stylesheet" href="assets/css/portfolio-style.css">
     <script type="application/ld+json">{
         "@context": "https://schema.org",
@@ -73,45 +76,29 @@
                 "url": "https://jeniel-ion.github.io/",
                 "name": "Jeniel Shah — Security Engineer",
                 "inLanguage": "en",
-                "publisher": {
-                    "@id": "https://jeniel-ion.github.io/#person"
-                }
-            },
-            {
-                "@type": "ProfilePage",
-                "@id": "https://jeniel-ion.github.io/#webpage",
-                "url": "https://jeniel-ion.github.io/",
-                "name": "Jeniel Shah — Security Engineer",
-                "inLanguage": "en",
-                "isPartOf": {
-                    "@id": "https://jeniel-ion.github.io/#website"
-                },
-                "mainEntity": {
-                    "@id": "https://jeniel-ion.github.io/#person"
-                }
+                "publisher": {"@id": "https://jeniel-ion.github.io/#person"}
             }
         ]
     }</script>
 </head>
-<body data-color-theme="green">
-<canvas id="backgroundCanvas" aria-hidden="true"></canvas>
+<body data-color-theme="dark">
 <a class="skip-navigation-link" href="#mainContent">Skip to content</a>
 <header class="site-header">
     <div class="header-inner">
-        <a class="site-logo" href="#top">JS<span>_</span></a>
+        <a class="site-logo" href="#top">JS<span>/</span></a>
         <nav class="primary-navigation" id="primaryNavigation" aria-label="Primary">
             <a href="#about">About</a><a href="#experience">Experience</a><a href="#certifications">Certs</a><a
                 href="#writeups">Writeups</a><a href="#research">Research</a><a href="#contact">Contact</a>
         </nav>
         <div class="header-actions">
-            <button type="button" id="themeSwitcherButton" class="button-ghost-small theme-toggle" title="Switch color theme (currently Green)" aria-label="Switch color theme. Current: Green. Activate to change."><span class="theme-swatch" aria-hidden="true"></span><span class="theme-label">Theme: Green</span></button>
+            <button type="button" id="themeSwitcherButton" class="button-ghost-small theme-toggle"
+                    title="Switch color theme (currently Dark)"
+                    aria-label="Switch color theme. Current: Dark. Activate to change."><span class="theme-swatch"
+                                                                                                  aria-hidden="true"></span><span
+                    class="theme-label">Dark</span></button>
             <button type="button" id="mobileMenuButton" class="button-ghost-small mobile-only" aria-expanded="false">
                 Menu
             </button>
-        </div>
-    </div>
-    <div class="dream-marquee" role="note" aria-label="Personal motto">
-        <div class="dream-marquee-track"><span>I was a kid fascinated by hacking. Somewhere along the way, I turned that curiosity into what I do every day — breaking things, learning how they work, and helping make them more secure.</span>
         </div>
     </div>
 </header>
@@ -119,13 +106,14 @@
     <div id="top" class="page-container">
         <section class="hero-section">
             <div class="hero-text-block">
-                <p class="terminal-prompt-line"><span class="prompt-symbol">➜</span><span id="heroPromptCommand"> whoami --security-engineer</span></p>
-                <h1 class="hero-name" id="heroName" aria-label="JENIEL SHAH">JENIEL SHAH</h1>
-                <p class="hero-role">Security Engineer • Mumbai</p>
+                <p class="hero-eyebrow"><span class="status-dot" aria-hidden="true"></span>Security Engineer — Mumbai, IN</p>
+                <h1 class="hero-name" id="heroName">Jeniel Shah</h1>
                 <p class="hero-summary" id="heroSummary"></p>
-                <p><span class="availability-badge">● OPEN TO WORK</span></p>
+                <p class="hero-availability"><span class="status-dot" aria-hidden="true"></span>Open to security
+                    engineering roles</p>
                 <div class="hero-button-row">
-                    <a class="button-primary" href="#contact">Contact Me</a>
+                    <a class="button-primary" href="#contact">Get in touch</a>
+                    <a class="button-ghost-small" href="#research">View research</a>
                 </div>
                 <div class="social-link-row">
                     <a href="https://github.com/jeniel-ion" target="_blank" rel="me noopener">GitHub</a>
@@ -135,23 +123,27 @@
                     <a href="mailto:jeniels72@gmail.com" rel="me">Email</a>
                 </div>
             </div>
-            <aside class="hero-journey-card" aria-label="Hacker journey preview">
-                <div class="terminal-card-header"><span>jeniel@journey: ~</span><span class="live-dot"></span></div>
+            <aside class="hero-journey-card" aria-label="Career summary">
+                <div class="terminal-card-header"><span>~/journey</span><span>read-only</span></div>
                 <pre class="terminal-card-body" id="heroTerminalBody"></pre>
+                <p class="terminal-card-hint">full log in ⌘K — type “journey”</p>
             </aside>
         </section>
+        <div class="standfirst-band" role="note" aria-label="Personal motto">
+            <p>I was a kid fascinated by hacking. Somewhere along the way, that curiosity became what I do every
+                day.</p>
+        </div>
         <section id="about" class="content-section" tabindex="-1">
             <h2 class="section-heading"><span class="section-number">01.</span> About</h2>
             <p class="about-summary" id="aboutSummaryLine"></p>
             <div class="proof-pill-row">
-                <a class="proof-pill" href="#research">Hall of Fame: 3 remediated →</a>
-                <a class="proof-pill" href="writeups/gynzy-account-takeover.html">Read 1 writeup →</a>
-                <button class="proof-pill" type="button" id="openJourneyFromAbout">Open journey ↓</button>
+                <a class="proof-pill" href="#research">Hall of Fame: 3 remediated</a>
+                <a class="proof-pill" href="writeups/gynzy-account-takeover.html">Read 1 writeup</a>
+                <button class="proof-pill" type="button" id="openJourneyFromAbout">Open journey</button>
             </div>
         </section>
         <section id="experience" class="content-section" tabindex="-1">
             <h2 class="section-heading"><span class="section-number">02.</span> Experience</h2>
-            <!--<p class="muted-text section-order-note">Most recent first — 01 is current</p>-->
             <div class="compact-row-list" id="experienceTimeline"></div>
         </section>
         <section id="certifications" class="content-section" tabindex="-1">
@@ -168,7 +160,6 @@
                 <button type="button" data-research-filter="All" class="filter-button active-filter">All</button>
                 <button type="button" data-research-filter="Cross-Site Scripting" class="filter-button">XSS</button>
                 <button type="button" data-research-filter="Broken Access Control" class="filter-button">IDOR</button>
-                <!--<button type="button" data-research-filter="Privilege Escalation" class="filter-button">PrivEsc</button>-->
             </div>
             <div class="hall-of-fame-list" id="researchGrid"></div>
         </section>
@@ -180,12 +171,13 @@
                         <button type="button" class="button-ghost-small" data-copy-value="jeniels72@gmail.com">Copy
                         </button>
                     </p>
-                    <p><strong>GitHub:</strong> <a href="https://github.com/jeniel-ion" target="_blank" rel="noopener">github.com/jeniel-ion</a>
+                    <p><strong>GitHub:</strong> <a href="https://github.com/jeniel-ion" target="_blank"
+                                                   rel="noopener">github.com/jeniel-ion</a>
                     </p>
                     <p><strong>LinkedIn:</strong> <a href="https://linkedin.com/in/jeniel-shah-77a455205"
                                                      target="_blank" rel="noopener">in/jeniel-shah-77a455205</a></p>
-                    <p><strong>X:</strong> <a href="https://x.com/JenielShah" target="_blank" rel="noopener">x.com/JenielShah</a>
-                    </p>
+                    <p><strong>X:</strong> <a href="https://x.com/JenielShah" target="_blank"
+                                              rel="noopener">x.com/JenielShah</a></p>
                     <p class="muted-text">Mumbai • replies within 24 hours • NDA friendly.</p>
                     <p><a class="button-primary"
                           href="mailto:jeniels72@gmail.com?subject=Hiring%20—%20Security%20Engineer%20role">Open email
@@ -195,27 +187,32 @@
         </section>
     </div>
 </main>
-<footer class="site-footer"><p>© 2026 Jeniel Shah <a href="sitemap.xml">sitemap</a> • <a href="robots.txt">robots</a>
+<footer class="site-footer"><p>© 2026 Jeniel Shah · <a href="sitemap.xml">sitemap</a> · <a href="robots.txt">robots</a>
 </p></footer>
-<div class="terminal-dock" id="terminalDock">
-    <div class="terminal-dock-header" id="terminalDockHeader" role="button" tabindex="0" aria-expanded="false"><span
-            class="terminal-status-dot"></span><span>my journey</span><span class="terminal-hint">open</span></div>
-    <div class="terminal-dock-body" id="terminalDockBody" hidden>
-        <div id="terminalOutput" aria-live="polite"></div>
-        <div class="terminal-input-row"><span class="prompt-symbol">➜</span><input id="terminalInput" type="text"
-                                                                                   autocomplete="off" spellcheck="false"
-                                                                                   aria-label="Terminal command"
-                                                                                   placeholder="help • origin • journey • now • hireme">
-            <button type="button" id="terminalSubmitButton" class="terminal-submit-button" aria-label="Run command">↵</button>
+<div class="palette-root" id="paletteRoot" data-open="false">
+    <div class="palette-panel" id="palettePanel" hidden>
+        <div class="palette-input-row">
+            <span class="palette-prompt" aria-hidden="true">➜</span>
+            <input id="paletteInput" type="text" autocomplete="off" spellcheck="false"
+                   aria-label="Command or section filter"
+                   placeholder="Type a command or section name…">
         </div>
+        <div class="palette-results" id="paletteResults" role="listbox" aria-label="Results"></div>
+        <div class="palette-output" id="paletteOutput" aria-live="polite" hidden></div>
+        <div class="palette-footer"><span>↑↓ navigate</span><span>↵ run</span><span>esc close</span></div>
     </div>
+    <button type="button" class="palette-bar" id="paletteBar" aria-expanded="false" aria-controls="palettePanel">
+        <span class="palette-key" id="paletteKeyHint" aria-hidden="true">⌘K</span>
+        <span>Jump to section or run a command</span>
+    </button>
 </div>
 <script src="site-content.js"></script>
 <script src="disclosure-records.js"></script>
 <script src="security-collections.js"></script>
-<script src="assets/js/background-animation.js"></script>
 <script src="assets/js/navigation-controller.js"></script>
-<script src="assets/js/terminal-emulator.js"></script>
+<script src="assets/js/command-palette.js"></script>
 <script src="assets/js/site-application.js"></script>
 </body>
 </html>
+
+

@@ -1,13 +1,13 @@
-﻿/**
- * Site Application — portfolio render engine.
+/**
+ * Site Application � portfolio render engine.
  * Production rules: one function per concern, every data-driven HTML
  * write passes through escapeHtml, every DOM access is null-guarded.
  */
 (function initializeSiteApplication() {
     "use strict";
 
-    var THEME_NAMES = ["green", "amber", "paper"];
-    var THEME_LABELS = ["Green", "Amber", "Paper"];
+    var THEME_NAMES = ["dark", "light"];
+    var THEME_LABELS = ["Dark", "Light"];
     var THEME_STORAGE_KEY = "portfolio-color-theme";
 
     var siteContent = window.SiteContent;
@@ -16,7 +16,7 @@
     }
 
     /* ------------------------------------------------------------------
-     * Shared state — one snapshot every renderer reads from.
+     * Shared state � one snapshot every renderer reads from.
      * ------------------------------------------------------------------ */
     function buildSharedState() {
         return {
@@ -60,7 +60,7 @@
     }
 
     /* ------------------------------------------------------------------
-     * Typing effect — hero boot sequence.
+     * Typing effect � hero boot sequence.
      * ------------------------------------------------------------------ */
     var prefersReducedMotion = Boolean(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
@@ -69,22 +69,6 @@
         cursor.className = "type-cursor";
         cursor.setAttribute("aria-hidden", "true");
         return cursor;
-    }
-
-    function typeText(element, fullText, speedMs, onDone) {
-        var cursor = makeTypeCursor();
-        var charIndex = 0;
-        function step() {
-            element.textContent = fullText.slice(0, charIndex);
-            element.appendChild(cursor);
-            if (charIndex >= fullText.length) {
-                if (onDone) { onDone(cursor); }
-                return;
-            }
-            charIndex += 1;
-            window.setTimeout(step, speedMs);
-        }
-        step();
     }
 
     function typeTextLines(element, lines, speedMs, lineDelayMs, onDone) {
@@ -119,56 +103,28 @@
     function renderHero() {
         setText("heroSummary", siteContent.profile.headlineSummary);
         var heroTerminal = byId("heroTerminalBody");
-        var promptCommand = byId("heroPromptCommand");
-        var heroName = byId("heroName");
         var terminalLines = [
-            "$ cat ~/journey.txt",
-            "Juggling my way through the world of security, one exploit at a time.",
+            "> cat journey.log",
             "",
-            "$ tap the terminal below to see how I got here →"
+            "Building my instincts, one vulnerability at a time"
         ];
 
-        if (prefersReducedMotion) {
-            if (heroTerminal) {
-                heroTerminal.textContent = terminalLines.join("\n");
-            }
+        if (!heroTerminal) {
             return;
         }
-
-        if (promptCommand) {
-            var promptText = promptCommand.textContent;
-            typeText(promptCommand, promptText, 30, function (promptCursor) {
-                if (promptCursor.parentNode) {
-                    promptCursor.parentNode.removeChild(promptCursor);
-                }
-            });
+        if (prefersReducedMotion) {
+            heroTerminal.textContent = terminalLines.join("\n");
+            return;
         }
-
-        if (heroName) {
-            var nameText = heroName.textContent;
-            heroName.textContent = "";
-            window.setTimeout(function () {
-                typeText(heroName, nameText, 65);
-            }, 150);
-        }
-
-        if (heroTerminal) {
-            heroTerminal.textContent = "";
-            window.setTimeout(function () {
-                typeTextLines(heroTerminal, terminalLines, 14, 140);
-            }, 550);
-        }
+        heroTerminal.textContent = "";
+        window.setTimeout(function () {
+            typeTextLines(heroTerminal, terminalLines, 18, 120);
+        }, 250);
     }
 
-    function openJourneyTerminal() {
-        var dockHeader = byId("terminalDockHeader");
-        var dockBody = byId("terminalDockBody");
-        if (dockHeader && dockBody && dockBody.hidden) {
-            dockHeader.click();
-        }
-        var terminalInput = byId("terminalInput");
-        if (terminalInput) {
-            terminalInput.focus();
+    function openJourneyPalette() {
+        if (window.JourneyPalette) {
+            window.JourneyPalette.runCommand("journey");
         }
     }
 
@@ -179,7 +135,7 @@
         }
         var openJourneyButton = byId("openJourneyFromAbout");
         if (openJourneyButton) {
-            openJourneyButton.addEventListener("click", openJourneyTerminal);
+            openJourneyButton.addEventListener("click", openJourneyPalette);
         }
     }
 
@@ -206,11 +162,14 @@
                 '" target="_blank" rel="noopener noreferrer" title="' +
                 escapeHtml(record.proofNote || "View proof") +
                 '" aria-label="View proof for ' +
-                escapeHtml(record.targetOrganization) + '">Link<span aria-hidden="true">↗</span></a>'
+                escapeHtml(record.targetOrganization) + '">Hall of Fame<span aria-hidden="true"></span>🔗</a>'
             : "";
-        return '<div class="hall-row"><span class="severity-high">' + escapeHtml(record.severityLevel) +
+        var severityKey = String(record.severityLevel || "low").toLowerCase();
+        var severityClass = severityKey === "high" ? "severity-high"
+            : severityKey === "medium" ? "severity-medium" : "severity-low";
+        return '<div class="hall-row"><span class="' + severityClass + '">' + escapeHtml(record.severityLevel) +
             '</span><div><strong>' + escapeHtml(record.targetOrganization) +
-            "</strong><small>" + escapeHtml(record.vulnerabilityClass) + " • " +
+            "</strong><small>" + escapeHtml(record.vulnerabilityClass) + " > " +
             escapeHtml(record.disclosureYear) + "</small></div>" + proofLink + "</div>";
     }
 
@@ -248,7 +207,7 @@
             return;
         }
         var card = '<article class="information-card"><p class="muted-text">' +
-            escapeHtml(writeup.articleTag) + " • " + escapeHtml(writeup.readingTime) +
+            escapeHtml(writeup.articleTag) + " > " + escapeHtml(writeup.readingTime) +
             "</p><h3>" + escapeHtml(writeup.articleTitle) + "</h3><p>" +
             escapeHtml(writeup.articleSummary) + '</p><a class="feature-link" href="' +
             escapeHtml(writeup.articlePage) + '">Read the writeup</a></article>';
@@ -275,7 +234,7 @@
             if (themeButton) {
                 var label = themeButton.querySelector(".theme-label");
                 if (label) {
-                    label.textContent = "Theme: " + THEME_LABELS[activeIndex];
+                    label.textContent = THEME_LABELS[activeIndex];
                 }
                 themeButton.title = "Switch color theme (currently " + THEME_LABELS[activeIndex] + ")";
                 themeButton.setAttribute("aria-label", "Switch color theme. Current: " + THEME_LABELS[activeIndex] + ". Activate to change.");
@@ -289,7 +248,7 @@
                 applyTheme();
                 try {
                     window.localStorage.setItem(THEME_STORAGE_KEY, THEME_NAMES[activeIndex]);
-                } catch (storageWriteError) { /* private browsing — theme stays session-only */
+                } catch (storageWriteError) { /* private browsing � theme stays session-only */
                 }
             });
         }
@@ -318,7 +277,7 @@
     }
 
     /* ------------------------------------------------------------------
-     * Boot — explicit call order, no implicit execution.
+     * Boot � explicit call order, no implicit execution.
      * ------------------------------------------------------------------ */
     function initPortfolio() {
         renderHero();

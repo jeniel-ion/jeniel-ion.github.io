@@ -12,3 +12,5 @@ node_modules/
 
 # Local env
 .env
+# Local design artifacts (mockups + verification screenshots - not for deploy)
+design-plan/
